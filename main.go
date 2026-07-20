@@ -116,6 +116,7 @@ func main() {
 	
 
 	running := true;
+	mousePos := piece.Vec2{ 0, 0 };
 	for running {
 		drawBoard(renderer);
 		err := drawPieces(renderer, board);
@@ -124,10 +125,15 @@ func main() {
 		}
 
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch event.(type) {
-			case *sdl.QuitEvent:
-				running = false;
-				break;
+			switch e := event.(type) {
+				case *sdl.QuitEvent:
+					running = false;
+					break;
+				case *sdl.MouseMotionEvent:
+					mousePos.X = e.X;
+					mousePos.Y = e.Y;
+					fmt.Printf("(%d, %d)\n", mousePos.X, mousePos.Y);
+					break;
 			}
 		}
 
