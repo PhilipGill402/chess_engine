@@ -3,12 +3,13 @@ package main
 import (
 	"github.com/veandco/go-sdl2/sdl"
 	"chess/piece"
+	"chess/globals"
 )
 
 func drawBoard(renderer *sdl.Renderer) {
 	for y := 0; y < 8; y++ {
 		for x := 0; x < 8; x++ {
-			rect := sdl.Rect { int32(x * cellSize), int32(y * cellSize), int32(cellSize), int32(cellSize) };
+			rect := sdl.Rect { int32(x * globals.CellSize), int32(y * globals.CellSize), int32(globals.CellSize), int32(globals.CellSize) };
 			
 			if ((x + y) % 2 == 0) {
 				renderer.SetDrawColor(255, 255, 255, 255);	
@@ -33,3 +34,5 @@ func drawPieces(renderer *sdl.Renderer, board []piece.Piece) error {
 
 	return nil;
 }
+
+

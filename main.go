@@ -4,16 +4,12 @@ import (
 	"fmt"
 	"github.com/veandco/go-sdl2/sdl"
 	"chess/piece"
+	"chess/globals"
 )
 
-const (
-	winWidth 	= 800
-	winHeight 	= 800
-	cellSize	= winWidth / 8
-)
 
 func initGameBoard(renderer *sdl.Renderer) ([]piece.Piece, error) {
-	board := make([]piece.Piece, 64);
+	board := make([]piece.Piece, 0);
 	
 	// init first row
 	for i := 0; i < 8; i++ {
@@ -21,15 +17,15 @@ func initGameBoard(renderer *sdl.Renderer) ([]piece.Piece, error) {
 		var err error;
 
 		if (i == 0 || i == 7) {
-			newPiece, err = piece.NewRook(int32(i * cellSize), 0, false, renderer);
+			newPiece, err = piece.NewRook(int32(i), 0, false, renderer);
 		} else if (i == 1 || i == 6) {
-			newPiece, err = piece.NewKnight(int32(i * cellSize), 0, false, renderer);
+			newPiece, err = piece.NewKnight(int32(i), 0, false, renderer);
 		} else if (i == 2 || i == 5) {
-			newPiece, err = piece.NewBishop(int32(i * cellSize), 0, false, renderer);
+			newPiece, err = piece.NewBishop(int32(i), 0, false, renderer);
 		} else if (i == 3) {
-			newPiece, err = piece.NewQueen(int32(i * cellSize), 0, false, renderer);
+			newPiece, err = piece.NewQueen(int32(i), 0, false, renderer);
 		} else {
-			newPiece, err = piece.NewKing(int32(i * cellSize), 0, false, renderer);	
+			newPiece, err = piece.NewKing(int32(i), 0, false, renderer);	
 		}
 
 		if (err != nil) {
@@ -41,7 +37,7 @@ func initGameBoard(renderer *sdl.Renderer) ([]piece.Piece, error) {
 
 	// init first pawn row
 	for i := 0; i < 8; i++ {
-		pawn, err := piece.NewPawn(int32(i * cellSize), int32(1 * cellSize), false, renderer);
+		pawn, err := piece.NewPawn(int32(i), int32(1), false, renderer);
 		if (err != nil) {
 			return nil, err;
 		}
@@ -56,7 +52,7 @@ func initGameBoard(renderer *sdl.Renderer) ([]piece.Piece, error) {
 
 	// init second pawn row
 	for i := 0; i < 8; i++ {
-		pawn, err := piece.NewPawn(int32(i * cellSize), int32(6 * cellSize), true, renderer);
+		pawn, err := piece.NewPawn(int32(i), int32(6), true, renderer);
 		if (err != nil) {
 			return nil, err;
 		}
@@ -70,15 +66,15 @@ func initGameBoard(renderer *sdl.Renderer) ([]piece.Piece, error) {
 		var err error;
 
 		if (i == 0 || i == 7) {
-			newPiece, err = piece.NewRook(int32(i * cellSize), int32(7 * cellSize), true, renderer);
+			newPiece, err = piece.NewRook(int32(i), int32(7), true, renderer);
 		} else if (i == 1 || i == 6) {
-			newPiece, err = piece.NewKnight(int32(i * cellSize), int32(7 * cellSize), true, renderer);
+			newPiece, err = piece.NewKnight(int32(i), int32(7), true, renderer);
 		} else if (i == 2 || i == 5) {
-			newPiece, err = piece.NewBishop(int32(i * cellSize), int32(7 * cellSize), true, renderer);
+			newPiece, err = piece.NewBishop(int32(i), int32(7), true, renderer);
 		} else if (i == 3) {
-			newPiece, err = piece.NewQueen(int32(i * cellSize), int32(7 * cellSize), true, renderer);
+			newPiece, err = piece.NewQueen(int32(i), int32(7), true, renderer);
 		} else {
-			newPiece, err = piece.NewKing(int32(i * cellSize), int32(7 * cellSize), true, renderer);	
+			newPiece, err = piece.NewKing(int32(i), int32(7), true, renderer);	
 		}
 
 		if (err != nil) {
@@ -97,7 +93,7 @@ func main() {
 	}
 	defer sdl.Quit();
 
-	window, err := sdl.CreateWindow("Chess", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, winWidth, winHeight, sdl.WINDOW_SHOWN);
+	window, err := sdl.CreateWindow("Chess", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, globals.WinWidth, globals.WinHeight, sdl.WINDOW_SHOWN);
 	if (err != nil) {
 		panic(err);
 	}
@@ -114,7 +110,7 @@ func main() {
 		panic(err);
 	}
 	
-
+	var selectedPiece piece.Piece;
 	running := true;
 	mousePos := piece.Vec2{ 0, 0 };
 	for running {
@@ -130,11 +126,20 @@ func main() {
 					running = false;
 					break;
 				case *sdl.MouseMotionEvent:
-					mousePos.X = e.X;
-					mousePos.Y = e.Y;
-					fmt.Printf("(%d, %d)\n", mousePos.X, mousePos.Y);
+					mousePos.X = e.X / globals.CellSize;
+					mousePos.Y = e.Y / globals.CellSize;
+					break;
+				case *sdl.MouseButtonEvent:
+					if (e.Type == sdl.MOUSEBUTTONUP) {
+						selectedPiece = board[mousePos.Y * 8 + mousePos.X];
+					}
+
 					break;
 			}
+		}
+
+		if (selectedPiece != nil) {
+			selectedPiece.DrawMoves(board, renderer);
 		}
 
 		renderer.Present();

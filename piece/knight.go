@@ -3,18 +3,28 @@ package piece
 import (
 	"github.com/veandco/go-sdl2/sdl"	
 	"github.com/veandco/go-sdl2/img"
+	"chess/globals"
 )
 
 type Knight struct {
 	pos			Vec2
 	color		bool // true = white; false = black
+	value		uint8	
 	texture		*sdl.Texture
+}
+
+func (piece *Knight) GetValue() uint8 {
+	return piece.value;
+}
+
+func (piece *Knight) GetColor() bool {
+	return piece.color;
 }
 
 func (piece *Knight) Draw(renderer *sdl.Renderer) error {
 	dst := sdl.Rect{
-		X: int32(piece.pos.X + 10),
-		Y: int32(piece.pos.Y + 10),
+		X: int32(piece.pos.X * globals.CellSize + 10),
+		Y: int32(piece.pos.Y * globals.CellSize + 10),
 		W: 80,
 		H: 80,
 	};
@@ -24,7 +34,7 @@ func (piece *Knight) Draw(renderer *sdl.Renderer) error {
 	return nil;	
 }
 
-func (piece *Knight) DrawMoves(renderer *sdl.Renderer) error {
+func (piece *Knight) DrawMoves(board []Piece, renderer *sdl.Renderer) error {
 	return nil;
 }
 
@@ -54,6 +64,7 @@ func NewKnight(x, y int32, color bool, renderer *sdl.Renderer) (*Knight, error) 
 	return &Knight{
 		pos: pos,
 		color: color,
+		value: 3,
 		texture: texture,
 	}, nil;
 }
