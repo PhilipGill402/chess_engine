@@ -18,44 +18,45 @@ type Pawn struct {
 func (piece *Pawn) getMoves(board []Piece) []Vec2 {
 	moves := make([]Vec2, 0);	
 	
-	// two square move
-	if (!piece.hasMoved) {
-		diff := int32(2);
-
-		// we're moving up if white
+	// forward movement
+	for diff := int32(1); diff <= 2; diff++ {
+		if (piece.hasMoved && diff == 2) {
+			break;
+		}
+		
+		adjDiff := diff;
 		if (piece.color == true) {
-			diff = -2;	
+			adjDiff *= -1;	
 		}
 
 		frontPos := Vec2 {
 			X: piece.pos.X,
-			Y: piece.pos.Y + diff,
+			Y: piece.pos.Y + adjDiff,
 		};
 		
-		frontPiece, _ := GetPiece(board, frontPos);
+		frontPiece, err := GetPiece(board, frontPos);
 		
-		if (frontPiece == nil) {
+		if (frontPiece == nil && err == nil) {
 			moves = append(moves, frontPos);
 		}
 	}
 
-	// one square move
-	diff := int32(1);
+	// capturing
+	for xDiff := int32(-1); xDiff <= 1; xDiff += 2 {
+		yDiff := int32(1);	
+		if (piece.color == true) {
+			yDiff = -1;	
+		}
 
-	// we're moving up if white
-	if (piece.color == true) {
-		diff = -1;	
-	}
+		pos := Vec2 {
+			X: piece.pos.X + xDiff,
+			Y: piece.pos.Y + yDiff,
+		}
 
-	frontPos := Vec2 {
-		X: piece.pos.X,
-		Y: piece.pos.Y + diff,
-	};
-	
-	frontPiece, _ := GetPiece(board, frontPos);
-	
-	if (frontPiece == nil) {
-		moves = append(moves, frontPos);
+		capturedPiece, err := GetPiece(board, pos);
+		if (capturedPiece != nil && err == nil && capturedPiece.GetColor() != piece.color) {
+			moves = append(moves, pos);	
+		}
 	}
 
 	return moves;

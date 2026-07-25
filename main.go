@@ -49,6 +49,12 @@ func initGameBoard(renderer *sdl.Renderer) ([]piece.Piece, error) {
 	for i := 0; i < 32; i++ {
 		board = append(board, nil);
 	}
+	
+	// TESTING
+	king, _ := piece.NewBishop(int32(2), int32(4), false, renderer);
+	board[34] = king;
+	//pawn, _ := piece.NewPawn(int32(3), int32(3), false, renderer);
+	//board[27] = pawn;
 
 	// init second pawn row
 	for i := 0; i < 8; i++ {
