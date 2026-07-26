@@ -29,6 +29,10 @@ func (piece *Rook) getMoves(board []Piece) []Vec2 {
 				}
 
 				blockingPiece, err := GetPiece(board, pos);
+				if (err != nil) {
+					break;
+				}	
+
 				isCheck, _ := resultsInCheck(board, pos, piece.pos);
 				if (isCheck) {
 					continue;
@@ -38,7 +42,7 @@ func (piece *Rook) getMoves(board []Piece) []Vec2 {
 				if (err == nil && blockingPiece != nil && blockingPiece.GetColor() != piece.color) {
 					moves = append(moves, pos);
 					break;
-				} else if (err != nil || blockingPiece != nil) {
+				} else if (blockingPiece != nil) {
 					break;
 				} else {
 					moves = append(moves, pos);
