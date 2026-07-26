@@ -4,6 +4,7 @@ import (
 	"github.com/veandco/go-sdl2/sdl"	
 	"github.com/veandco/go-sdl2/img"
 	"chess/globals"
+	"slices"
 	"errors"
 )
 
@@ -87,8 +88,13 @@ func (piece *Rook) DrawMoves(board []Piece, renderer *sdl.Renderer) error {
 	return nil;
 }
 
-func (piece *Rook) Move(mov Vec2) error {
-	return nil;
+func (piece *Rook) Move(board []Piece, move Vec2) {
+	moves := piece.getMoves(board);
+	if (slices.Contains(moves, move)) {	
+		board[move.Y * 8 + move.X] = piece;
+		board[piece.pos.Y * 8 + piece.pos.X] = nil;
+		piece.pos = move;
+	}
 }
 
 func NewRook(x, y int32, color bool, renderer *sdl.Renderer) (*Rook, error) {

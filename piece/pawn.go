@@ -4,6 +4,7 @@ import (
 	"github.com/veandco/go-sdl2/sdl"	
 	"github.com/veandco/go-sdl2/img"
 	"chess/globals"
+	"slices"	
 	"errors"
 )
 
@@ -104,8 +105,14 @@ func (piece *Pawn) DrawMoves(board []Piece, renderer *sdl.Renderer) error {
 	return nil;
 }
 
-func (piece *Pawn) Move(mov Vec2) error {
-	return nil;
+func (piece *Pawn) Move(board []Piece, move Vec2) {
+	moves := piece.getMoves(board);
+	if (slices.Contains(moves, move)) {	
+		board[move.Y * 8 + move.X] = piece;
+		board[piece.pos.Y * 8 + piece.pos.X] = nil;
+		piece.pos = move;
+		piece.hasMoved = true;
+	}
 }
 
 func NewPawn(x, y int32, color bool, renderer *sdl.Renderer) (*Pawn, error) {

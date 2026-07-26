@@ -137,6 +137,14 @@ func main() {
 					break;
 				case *sdl.MouseButtonEvent:
 					if (e.Type == sdl.MOUSEBUTTONUP) {
+						if (selectedPiece != nil) {
+							pos := piece.Vec2 {
+								X: mousePos.X,
+								Y: mousePos.Y,
+							};
+							selectedPiece.Move(board, pos);
+							selectedPiece = nil;
+						}	
 						selectedPiece = board[mousePos.Y * 8 + mousePos.X];
 					}
 

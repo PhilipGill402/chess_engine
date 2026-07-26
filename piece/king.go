@@ -4,6 +4,7 @@ import (
 	"github.com/veandco/go-sdl2/sdl"	
 	"github.com/veandco/go-sdl2/img"
 	"chess/globals"
+	"slices"
 	"errors"
 )
 
@@ -29,12 +30,18 @@ func (piece *King) getMoves(board []Piece) []Vec2 {
 			};
 
 			posPiece, err := GetPiece(board, pos);
+			if (err != nil) {
+				continue;
+			}
+			
 			isCheck, _ := resultsInCheck(board, pos, piece.pos);
 			if (isCheck) {
 				continue;
 			}
 
-			if (posPiece == nil && err == nil) {
+			if (posPiece == nil) {
+				moves = append(moves, pos);
+			} else if (posPiece.GetColor() != piece.color) {
 				moves = append(moves, pos);
 			}
 		}
@@ -81,8 +88,13 @@ func (piece *King) DrawMoves(board []Piece, renderer *sdl.Renderer) error {
 	return nil;
 }
 
-func (piece *King) Move(mov Vec2) error {
-	return nil;
+func (piece *King) Move(board []Piece, move Vec2) {
+	moves := piece.getMoves(board);
+	if (slices.Contains(moves, move)) {	
+		board[move.Y * 8 + move.X] = piece;
+		board[piece.pos.Y * 8 + piece.pos.X] = nil;
+		piece.pos = move;
+	}
 }
 
 func NewKing(x, y int32, color bool, renderer *sdl.Renderer) (*King, error) {

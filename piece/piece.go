@@ -15,7 +15,7 @@ type Piece interface {
 	GetColor()											bool
 	Draw(renderer *sdl.Renderer)						error
 	DrawMoves(board []Piece, renderer *sdl.Renderer)	error
-	Move(move Vec2) 									error
+	Move(board []Piece, move Vec2)
 }
 
 func FillCircle(renderer *sdl.Renderer, centerX, centerY, radius int32) error {
@@ -42,7 +42,7 @@ func GetPiece(board []Piece, pos Vec2) (Piece, error) {
 	return board[pos.Y * 8 + pos.X], nil;
 }
 
-func isCheck(board []Piece) (bool, error) {
+func isCheck(board []Piece, color bool) (bool, error) {
 	kingIdx := -1;
 	for i := 0; i < 64; i++ {
 		piece := board[i];
@@ -51,7 +51,7 @@ func isCheck(board []Piece) (bool, error) {
 		}
 
 		// found king
-		if (piece.GetValue() == 255) {
+		if (piece.GetValue() == 255 && piece.GetColor() == color) {
 			kingIdx = i;
 			break;
 		}
@@ -153,22 +153,22 @@ func resultsInCheck(board []Piece, dst Vec2, src Vec2) (bool, error) {
 	
 	srcPiece, err := GetPiece(board, src);
 	if (err != nil) {
-		check, _ := isCheck(board);
+		check, _ := isCheck(board, srcPiece.GetColor());
 		return check, err;
 	}
 
 	if (dst.Y < 0 || dst.Y > 7) {
-		check, _ := isCheck(board);
+		check, _ := isCheck(board, srcPiece.GetColor());
 		return check, errors.New("Index out of range");
 	} else if (dst.X < 0 || dst.X > 7) {
-		check, _ := isCheck(board);
+		check, _ := isCheck(board, srcPiece.GetColor());
 		return check, errors.New("Index out of range");
 	}
 
 	newBoard[dst.Y * 8 + dst.X] = srcPiece;
 	newBoard[src.Y * 8 + src.X] = nil;
 
-	return isCheck(newBoard);
+	return isCheck(newBoard, srcPiece.GetColor());
 }
 
 
