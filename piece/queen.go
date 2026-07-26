@@ -29,6 +29,10 @@ func (piece *Queen) getMoves(board []Piece) []Vec2 {
 				}
 
 				blockingPiece, err := GetPiece(board, currPos);
+				isCheck, _ := resultsInCheck(board, currPos, piece.pos);
+				if (isCheck) {
+					continue;
+				}
 				
 				if (err == nil && blockingPiece != nil && blockingPiece.GetColor() != piece.color) {
 					moves = append(moves, currPos);
@@ -54,6 +58,10 @@ func (piece *Queen) getMoves(board []Piece) []Vec2 {
 				}
 
 				blockingPiece, err := GetPiece(board, pos);
+				isCheck, _ := resultsInCheck(board, pos, piece.pos);
+				if (isCheck) {
+					continue;
+				}
 
 				// we reached another piece or went out of bounds so break loop	
 				if (err == nil && blockingPiece != nil && blockingPiece.GetColor() != piece.color) {

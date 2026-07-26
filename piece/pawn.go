@@ -35,7 +35,11 @@ func (piece *Pawn) getMoves(board []Piece) []Vec2 {
 		};
 		
 		frontPiece, err := GetPiece(board, frontPos);
-		
+		isCheck, _ := resultsInCheck(board, frontPos, piece.pos);
+		if (isCheck) {
+			continue;
+		}
+
 		if (frontPiece == nil && err == nil) {
 			moves = append(moves, frontPos);
 		}

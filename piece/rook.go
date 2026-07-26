@@ -28,6 +28,10 @@ func (piece *Rook) getMoves(board []Piece) []Vec2 {
 				}
 
 				blockingPiece, err := GetPiece(board, pos);
+				isCheck, _ := resultsInCheck(board, pos, piece.pos);
+				if (isCheck) {
+					continue;
+				}
 
 				// we reached another piece or went out of bounds so break loop	
 				if (err == nil && blockingPiece != nil && blockingPiece.GetColor() != piece.color) {

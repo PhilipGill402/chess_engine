@@ -28,6 +28,12 @@ func (piece *Bishop) getMoves(board []Piece) []Vec2 {
 				}
 
 				blockingPiece, err := GetPiece(board, currPos);
+				isCheck, _ := resultsInCheck(board, currPos, piece.pos);
+				if (isCheck) {
+					continue;
+				}
+
+
 				if (err == nil && blockingPiece != nil && blockingPiece.GetColor() != piece.color) {
 					moves = append(moves, currPos);
 					break;

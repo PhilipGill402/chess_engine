@@ -29,6 +29,10 @@ func (piece *King) getMoves(board []Piece) []Vec2 {
 			};
 
 			posPiece, err := GetPiece(board, pos);
+			isCheck, _ := resultsInCheck(board, pos, piece.pos);
+			if (isCheck) {
+				continue;
+			}
 
 			if (posPiece == nil && err == nil) {
 				moves = append(moves, pos);

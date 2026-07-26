@@ -29,6 +29,18 @@ func (piece *Knight) getMoves(board []Piece) []Vec2 {
 					pos.X += j;
 					pos.Y += diff;
 				}
+
+				blockingPiece, err := GetPiece(board, pos);
+				if (err != nil) {
+					continue;
+				} else if (blockingPiece != nil && blockingPiece.GetColor() == piece.color) {
+					continue;
+				}
+
+				isCheck, _ := resultsInCheck(board, pos, piece.pos);
+				if (isCheck) {
+					continue;
+				}
 	
 				moves = append(moves, pos);
 			}
@@ -102,7 +114,7 @@ func NewKnight(x, y int32, color bool, renderer *sdl.Renderer) (*Knight, error) 
 	return &Knight{
 		pos: pos,
 		color: color,
-		value: 3,
+		value: 4,
 		texture: texture,
 	}, nil;
 }
